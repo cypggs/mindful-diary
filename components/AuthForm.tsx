@@ -10,7 +10,37 @@ export default function AuthForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showResendEmail, setShowResendEmail] = useState(false);
   const router = useRouter();
+
+  const handleResendConfirmation = async () => {
+    if (!email) {
+      setMessage('请输入您的邮箱地址');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) throw error;
+      setMessage('✅ 确认邮件已重新发送，请检查您的邮箱');
+      setShowResendEmail(false);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : '发送失败';
+      setMessage(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +52,13 @@ export default function AuthForm() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
         });
         if (error) throw error;
-        setMessage('注册成功！请检查邮箱确认链接');
+        setMessage('注册成功！📧 请检查您的邮箱并点击确认链接完成注册');
+        setShowResendEmail(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -118,6 +152,19 @@ export default function AuthForm() {
               {isSignUp ? '已有账号？立即登录' : '没有账号？立即注册'}
             </button>
           </div>
+
+          {showResendEmail && (
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={handleResendConfirmation}
+                disabled={loading}
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors disabled:opacity-50"
+              >
+                没收到邮件？点击重新发送
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>
