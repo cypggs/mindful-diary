@@ -32,7 +32,7 @@ export default function NoteEditor({ onSave }: NoteEditorProps) {
       if (!user) throw new Error('未登录');
 
       const { error } = await supabase
-        .from('notes')
+        .from('diary_entries')
         .insert([
           {
             user_id: user.id,

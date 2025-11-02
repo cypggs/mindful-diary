@@ -29,7 +29,7 @@ export default function Dashboard() {
   const fetchNotes = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from('notes')
+      .from('diary_entries')
       .select('*')
       .order('created_at', { ascending: false });
 

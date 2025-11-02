@@ -22,7 +22,7 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
     if (!confirm('确定要删除这条日记吗？')) return;
 
     const { error } = await supabase
-      .from('notes')
+      .from('diary_entries')
       .delete()
       .eq('id', note.id);
 
