@@ -34,7 +34,7 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
     onDelete();
   };
 
-  const formatDate = (dateString: string) => {
+  const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -60,17 +60,35 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
     }
   };
 
+  const formatFullTimestamp = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow animate-fade-in">
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          {note.mood && (
-            <span className="text-2xl" title={note.mood}>
-              {moodEmojis[note.mood]}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            {note.mood && (
+              <span className="text-2xl" title={note.mood}>
+                {moodEmojis[note.mood]}
+              </span>
+            )}
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              {formatRelativeTime(note.created_at)}
             </span>
-          )}
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {formatDate(note.created_at)}
+          </div>
+          <span className="text-xs text-gray-400 dark:text-gray-500 ml-0.5" title="发布时间">
+            📅 {formatFullTimestamp(note.created_at)}
           </span>
         </div>
         <button

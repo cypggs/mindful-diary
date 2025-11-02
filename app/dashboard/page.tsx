@@ -1,15 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase, Note } from '@/lib/supabase';
 import NoteEditor from '@/components/NoteEditor';
 import NoteList from '@/components/NoteList';
+import SearchBar from '@/components/SearchBar';
 
 export default function Dashboard() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -46,6 +48,18 @@ export default function Dashboard() {
     router.push('/login');
   };
 
+  // 过滤日记
+  const filteredNotes = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return notes;
+    }
+
+    const query = searchQuery.toLowerCase();
+    return notes.filter((note) =>
+      note.content.toLowerCase().includes(query)
+    );
+  }, [notes, searchQuery]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -80,8 +94,22 @@ export default function Dashboard() {
         {/* Note Editor */}
         <NoteEditor onSave={fetchNotes} />
 
+        {/* Search Bar */}
+        <SearchBar
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="搜索日记内容..."
+        />
+
+        {/* Search Results Info */}
+        {searchQuery && (
+          <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            找到 {filteredNotes.length} 条相关日记
+          </div>
+        )}
+
         {/* Notes List */}
-        <NoteList notes={notes} onUpdate={fetchNotes} />
+        <NoteList notes={filteredNotes} onUpdate={fetchNotes} />
       </div>
     </div>
   );
