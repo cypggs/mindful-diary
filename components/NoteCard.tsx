@@ -111,7 +111,7 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
         </button>
       </div>
 
-      <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
+      <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed break-words overflow-wrap-anywhere">
         {note.content}
       </p>
     </div>
