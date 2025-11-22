@@ -6,12 +6,14 @@ import { supabase, Note } from '@/lib/supabase';
 import NoteEditor from '@/components/NoteEditor';
 import NoteList from '@/components/NoteList';
 import SearchBar from '@/components/SearchBar';
+import TokenManager from '@/components/TokenManager';
 
 export default function Dashboard() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showTokenManager, setShowTokenManager] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -110,12 +112,21 @@ export default function Dashboard() {
                 {getGreeting()}
               </p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="mt-1 px-4 py-2 text-sm text-diary-500 hover:text-diary-700 hover:bg-diary-100/50 rounded-xl transition-all duration-300"
-            >
-              👋 退出
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowTokenManager(true)}
+                className="mt-1 px-4 py-2 text-sm text-diary-500 hover:text-diary-700 hover:bg-diary-100/50 rounded-xl transition-all duration-300 flex items-center gap-1"
+                title="API Token 管理"
+              >
+                🔑 API
+              </button>
+              <button
+                onClick={handleLogout}
+                className="mt-1 px-4 py-2 text-sm text-diary-500 hover:text-diary-700 hover:bg-diary-100/50 rounded-xl transition-all duration-300"
+              >
+                👋 退出
+              </button>
+            </div>
           </div>
         </header>
 
@@ -170,6 +181,11 @@ export default function Dashboard() {
           <p>用文字拥抱每一个平凡的日子 💕</p>
         </div>
       </div>
+
+      {/* Token Manager Modal */}
+      {showTokenManager && (
+        <TokenManager onClose={() => setShowTokenManager(false)} />
+      )}
     </div>
   );
 }

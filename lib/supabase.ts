@@ -13,3 +13,12 @@ export type Note = {
   created_at: string;
   updated_at: string;
 };
+
+export type APIToken = {
+  id: string;
+  user_id: string;
+  token: string;
+  name: string;
+  created_at: string;
+  last_used_at: string | null;
+};

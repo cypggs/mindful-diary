@@ -35,9 +35,13 @@ Required in `.env.local` (never commit this file):
 ```
 NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
 ```
 
-These must also be configured in Vercel for production deployments.
+**IMPORTANT**:
+- The `SUPABASE_SERVICE_ROLE_KEY` is required for API token authentication and MCP server functionality
+- This key bypasses Row Level Security (RLS) - keep it secret!
+- Configure all variables in Vercel for production deployments
 
 ## Architecture
 
@@ -58,7 +62,18 @@ Table: `diary_entries`
 - `created_at` (timestamp)
 - `updated_at` (timestamp)
 
-**Important**: The table is named `diary_entries` (not `notes`). Row Level Security (RLS) is enabled - users can only access their own entries.
+Table: `api_tokens`
+- `id` (uuid, primary key)
+- `user_id` (uuid, references auth.users)
+- `token` (text, unique) - API token prefixed with `mdt_`
+- `name` (text) - user-defined name for the token
+- `created_at` (timestamp)
+- `last_used_at` (timestamp, nullable)
+
+**Important**:
+- `diary_entries` table has Row Level Security (RLS) enabled - users can only access their own entries
+- `api_tokens` table has RLS policies allowing users to manage only their own tokens
+- Migrations are in `supabase/migrations/` directory
 
 ### Component Architecture
 
@@ -74,6 +89,13 @@ Table: `diary_entries`
 - `NoteList.tsx` - Grid/list display of diary entries
 - `NoteCard.tsx` - Individual diary entry card with delete functionality and timestamp display
 - `SearchBar.tsx` - Search input for filtering entries
+- `TokenManager.tsx` - API token management interface (create, list, delete tokens)
+
+**API Routes** (`app/api/`):
+- `diary/create/route.ts` - POST endpoint for creating diary entries via API token
+- `tokens/route.ts` - GET/POST endpoints for listing and creating API tokens
+- `tokens/[id]/route.ts` - DELETE endpoint for removing API tokens
+- `mcp/route.ts` - MCP (Model Context Protocol) server endpoint
 
 ### Data Flow Pattern
 
@@ -164,6 +186,82 @@ The app is Chinese-language focused:
 - Use `lang="zh-CN"` in HTML
 - Date/time formatting uses `'zh-CN'` locale
 - Error messages and placeholders in Chinese
+
+## API Token Authentication
+
+Users can create API tokens to programmatically submit diary entries without using the web UI. This enables integration with external tools, automation, and MCP clients.
+
+### Token Management
+
+- Users create tokens via the Dashboard (click 🔑 API button)
+- Each token has a user-defined name for identification
+- Tokens are prefixed with `mdt_` (Mindful Diary Token)
+- Tokens only have permission to **create** diary entries (not read or delete)
+- Users can revoke tokens anytime
+
+### API Usage
+
+**Create Diary Entry**:
+```bash
+curl -X POST https://riji.cypggs.com/api/diary/create \
+  -H "Authorization: Bearer mdt_xxx..." \
+  -H "Content-Type: application/json" \
+  -d '{"content":"今天很开心","mood":"happy"}'
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "user_id": "uuid",
+    "content": "今天很开心",
+    "mood": "happy",
+    "created_at": "2025-01-22T...",
+    "updated_at": "2025-01-22T..."
+  }
+}
+```
+
+### MCP Server Integration
+
+The app provides an MCP (Model Context Protocol) server that allows Claude Desktop to create diary entries directly.
+
+**Configuration** (see `MCP_SETUP.md` for details):
+```json
+{
+  "mcpServers": {
+    "mindful-diary": {
+      "transport": {
+        "type": "http",
+        "url": "https://riji.cypggs.com/api/mcp",
+        "headers": {
+          "Authorization": "Bearer mdt_xxx..."
+        }
+      }
+    }
+  }
+}
+```
+
+**Available Tools**:
+- `create_diary_entry` - Creates a new diary entry with optional mood
+
+**Usage Example**:
+```
+User: "Create a diary entry about my productive day today"
+Claude: [Uses create_diary_entry tool]
+Result: 日记创建成功！
+```
+
+### Security Model
+
+1. API tokens are stored in `api_tokens` table with RLS policies
+2. Service role key (`SUPABASE_SERVICE_ROLE_KEY`) is used to bypass RLS for token verification
+3. After verifying token, entries are created with the token owner's `user_id`
+4. Tokens can only create entries, never read or modify existing ones
+5. `last_used_at` timestamp is updated on each API request
 
 ## Future Development Considerations
 
