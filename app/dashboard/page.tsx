@@ -62,8 +62,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-gray-600 dark:text-gray-400">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-yellow-950 dark:to-orange-950 flex items-center justify-center">
+        <div className="animate-pulse text-amber-700 dark:text-amber-300 font-medium">
           加载中...
         </div>
       </div>
@@ -71,21 +71,21 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-yellow-950 dark:to-orange-950">
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+            <h1 className="text-3xl font-bold text-amber-900 dark:text-amber-100 mb-1">
               Mindful Diary
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-amber-600 dark:text-amber-400">
               {user?.email}
             </p>
           </div>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            className="px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 transition-colors font-medium"
           >
             退出登录
           </button>
@@ -103,7 +103,7 @@ export default function Dashboard() {
 
         {/* Search Results Info */}
         {searchQuery && (
-          <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="mb-4 text-sm text-amber-700 dark:text-amber-300 font-medium">
             找到 {filteredNotes.length} 条相关日记
           </div>
         )}

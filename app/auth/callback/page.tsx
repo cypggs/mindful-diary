@@ -62,17 +62,17 @@ export default function AuthCallback() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 px-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 text-center animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-yellow-950 dark:to-orange-950 px-4">
+      <div className="max-w-md w-full bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-2xl shadow-2xl p-8 text-center animate-fade-in border border-amber-200/50 dark:border-yellow-700/30">
         {status === 'loading' && (
           <>
             <div className="mb-6">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-500 mx-auto"></div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-2xl font-bold text-amber-900 dark:text-amber-100 mb-2">
               验证中
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">{message}</p>
+            <p className="text-amber-600 dark:text-amber-400">{message}</p>
           </>
         )}
 
@@ -84,7 +84,7 @@ export default function AuthCallback() {
             <h2 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
               验证成功
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">{message}</p>
+            <p className="text-amber-600 dark:text-amber-400">{message}</p>
           </>
         )}
 
@@ -96,17 +96,17 @@ export default function AuthCallback() {
             <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
               验证失败
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">{message}</p>
+            <p className="text-amber-600 dark:text-amber-400 mb-6">{message}</p>
             <div className="space-y-3">
               <button
                 onClick={() => router.push('/login')}
-                className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all font-medium"
+                className="w-full px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-all font-medium shadow-md"
               >
                 返回登录
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="w-full px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all font-medium"
+                className="w-full px-6 py-3 bg-amber-100 dark:bg-amber-800/30 text-amber-900 dark:text-amber-100 rounded-lg hover:bg-amber-200 dark:hover:bg-amber-700/40 transition-all font-medium"
               >
                 重试
               </button>

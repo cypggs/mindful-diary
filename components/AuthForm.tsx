@@ -76,13 +76,13 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 px-4">
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-10 rounded-2xl shadow-2xl animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-yellow-950 dark:to-orange-950 px-4">
+      <div className="max-w-md w-full space-y-8 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-yellow-900/20 dark:to-amber-900/20 p-10 rounded-2xl shadow-2xl animate-fade-in border border-amber-200/50 dark:border-yellow-700/30">
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-4xl font-bold text-amber-900 dark:text-amber-100 mb-2">
             Mindful Diary
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-amber-600 dark:text-amber-400">
             记录你的灵感与心情
           </p>
         </div>
@@ -101,7 +101,7 @@ export default function AuthForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 transition-all"
+                className="appearance-none relative block w-full px-4 py-3 border border-amber-200/50 dark:border-yellow-700/30 placeholder-amber-400 dark:placeholder-amber-500 text-amber-900 dark:text-amber-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent bg-white/50 dark:bg-amber-900/20 transition-all"
                 placeholder="邮箱地址"
               />
             </div>
@@ -117,7 +117,7 @@ export default function AuthForm() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 transition-all"
+                className="appearance-none relative block w-full px-4 py-3 border border-amber-200/50 dark:border-yellow-700/30 placeholder-amber-400 dark:placeholder-amber-500 text-amber-900 dark:text-amber-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent bg-white/50 dark:bg-amber-900/20 transition-all"
                 placeholder="密码"
               />
             </div>
@@ -137,7 +137,7 @@ export default function AuthForm() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-amber-500 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {loading ? '处理中...' : (isSignUp ? '注册' : '登录')}
             </button>
@@ -147,7 +147,7 @@ export default function AuthForm() {
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors"
+              className="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors font-medium"
             >
               {isSignUp ? '已有账号？立即登录' : '没有账号？立即注册'}
             </button>
@@ -159,7 +159,7 @@ export default function AuthForm() {
                 type="button"
                 onClick={handleResendConfirmation}
                 disabled={loading}
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors disabled:opacity-50"
+                className="text-sm text-amber-500 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors disabled:opacity-50"
               >
                 没收到邮件？点击重新发送
               </button>
