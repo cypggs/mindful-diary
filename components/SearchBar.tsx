@@ -11,7 +11,7 @@ export default function SearchBar({ value, onChange, placeholder = '搜索日记
     <div className="relative mb-6">
       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
         <svg
-          className="h-5 w-5 text-gray-400"
+          className="h-5 w-5 text-amber-500 dark:text-amber-400"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
@@ -28,12 +28,12 @@ export default function SearchBar({ value, onChange, placeholder = '搜索日记
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-11 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all shadow-sm"
+        className="w-full pl-11 pr-4 py-3 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-yellow-900/20 dark:to-amber-900/20 border border-amber-200/50 dark:border-yellow-700/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-amber-900 dark:text-amber-100 placeholder-amber-400 dark:placeholder-amber-500 transition-all shadow-lg"
       />
       {value && (
         <button
           onClick={() => onChange('')}
-          className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          className="absolute inset-y-0 right-0 pr-4 flex items-center text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 transition-colors"
           title="清除搜索"
         >
           <svg

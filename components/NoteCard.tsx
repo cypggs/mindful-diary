@@ -85,24 +85,11 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
   };
 
   return (
-    <div className="relative animate-fade-in">
-      {/* 回形针装饰 */}
-      <div className="absolute -left-1 top-6 z-10">
-        <svg width="40" height="80" viewBox="0 0 40 80" fill="none">
-          <path
-            d="M8 10 L8 50 Q8 60 16 60 Q24 60 24 50 L24 20 Q24 15 20 15 Q16 15 16 20 L16 45"
-            stroke="#9CA3AF"
-            strokeWidth="3"
-            fill="none"
-            opacity="0.6"
-          />
-        </svg>
-      </div>
-
+    <div className="animate-fade-in">
       {/* 纸张卡片 */}
       <div
         onClick={() => setIsExpanded(!isExpanded)}
-        className="relative ml-6 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-amber-200/50 dark:border-yellow-700/30"
+        className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-amber-200/50 dark:border-yellow-700/30"
         style={{
           background: isExpanded
             ? 'linear-gradient(135deg, #fefce8 0%, #fef3c7 100%)'

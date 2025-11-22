@@ -62,13 +62,13 @@ export default function NoteEditor({ onSave }: NoteEditorProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-6 animate-slide-up">
+    <div className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-2xl shadow-xl p-6 mb-6 animate-slide-up border border-amber-200/50 dark:border-yellow-700/30">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="记录此刻的想法... 支持 Markdown 语法 | Shift + Enter 快速保存"
-        className="w-full h-32 px-4 py-3 border-0 focus:ring-2 focus:ring-indigo-500 rounded-lg resize-none text-gray-900 dark:text-white dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-all"
+        className="w-full h-32 px-4 py-3 border border-amber-200/50 dark:border-yellow-700/30 focus:ring-2 focus:ring-amber-400 rounded-lg resize-none text-amber-900 dark:text-amber-100 bg-white/50 dark:bg-amber-900/20 placeholder-amber-400 dark:placeholder-amber-500 transition-all"
         autoFocus
       />
 
@@ -80,8 +80,8 @@ export default function NoteEditor({ onSave }: NoteEditorProps) {
               onClick={() => setMood(mood === m.value ? null : m.value)}
               className={`px-3 py-2 rounded-lg text-sm transition-all ${
                 mood === m.value
-                  ? 'bg-indigo-600 text-white scale-105'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ? 'bg-amber-500 text-white scale-105 shadow-md'
+                  : 'bg-amber-100 dark:bg-amber-800/30 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-700/40'
               }`}
               title={m.label}
             >
@@ -93,7 +93,7 @@ export default function NoteEditor({ onSave }: NoteEditorProps) {
         <button
           onClick={handleSave}
           disabled={!content.trim() || saving}
-          className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium"
+          className="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium shadow-md"
         >
           {saving ? '保存中...' : '保存'}
         </button>
