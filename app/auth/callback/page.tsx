@@ -12,13 +12,11 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // 从 URL hash 中获取认证信息
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const error = hashParams.get('error');
         const errorDescription = hashParams.get('error_description');
 
         if (error) {
-          // 检查是否是已过期的错误
           if (error === 'access_denied' && errorDescription?.includes('expired')) {
             setStatus('error');
             setMessage('确认链接已过期，请重新注册或登录后请求新的确认邮件');
@@ -29,7 +27,6 @@ export default function AuthCallback() {
           return;
         }
 
-        // 检查用户会话
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) {
@@ -62,57 +59,85 @@ export default function AuthCallback() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-yellow-950 dark:to-orange-950 px-4">
-      <div className="max-w-md w-full bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-2xl shadow-2xl p-8 text-center animate-fade-in border border-amber-200/50 dark:border-yellow-700/30">
-        {status === 'loading' && (
-          <>
-            <div className="mb-6">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-500 mx-auto"></div>
-            </div>
-            <h2 className="text-2xl font-bold text-amber-900 dark:text-amber-100 mb-2">
-              验证中
-            </h2>
-            <p className="text-amber-600 dark:text-amber-400">{message}</p>
-          </>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-diary-50 via-diary-100/50 to-diary-200/30 flex items-center justify-center relative overflow-hidden px-4">
+      {/* 装饰性背景元素 */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-diary-300/20 rounded-full blur-3xl animate-pulse-soft"></div>
+        <div className="absolute top-1/2 -left-20 w-60 h-60 bg-diary-400/10 rounded-full blur-3xl animate-pulse-soft" style={{ animationDelay: '2s' }}></div>
+      </div>
 
-        {status === 'success' && (
-          <>
-            <div className="mb-6">
-              <div className="text-6xl">✅</div>
-            </div>
-            <h2 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
-              验证成功
-            </h2>
-            <p className="text-amber-600 dark:text-amber-400">{message}</p>
-          </>
-        )}
+      {/* 状态卡片 */}
+      <div className="relative z-10 w-full max-w-sm animate-scale-in">
+        <div className="bg-white/70 backdrop-blur-xl rounded-4xl shadow-soft-lg border border-diary-100 p-8 text-center">
+          {status === 'loading' && (
+            <>
+              <div className="mb-6">
+                <div className="relative w-16 h-16 mx-auto">
+                  <div className="absolute inset-0 rounded-full border-4 border-diary-200"></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-diary-500 border-t-transparent animate-spin"></div>
+                </div>
+              </div>
+              <h2 className="text-xl font-semibold text-diary-900 mb-2">验证中</h2>
+              <p className="text-diary-500 text-sm">{message}</p>
+            </>
+          )}
 
-        {status === 'error' && (
-          <>
-            <div className="mb-6">
-              <div className="text-6xl">❌</div>
-            </div>
-            <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
-              验证失败
-            </h2>
-            <p className="text-amber-600 dark:text-amber-400 mb-6">{message}</p>
-            <div className="space-y-3">
-              <button
-                onClick={() => router.push('/login')}
-                className="w-full px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-all font-medium shadow-md"
-              >
-                返回登录
-              </button>
-              <button
-                onClick={() => window.location.reload()}
-                className="w-full px-6 py-3 bg-amber-100 dark:bg-amber-800/30 text-amber-900 dark:text-amber-100 rounded-lg hover:bg-amber-200 dark:hover:bg-amber-700/40 transition-all font-medium"
-              >
-                重试
-              </button>
-            </div>
-          </>
-        )}
+          {status === 'success' && (
+            <>
+              <div className="mb-6">
+                <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
+              <h2 className="text-xl font-semibold text-green-600 mb-2">验证成功</h2>
+              <p className="text-diary-500 text-sm">{message}</p>
+            </>
+          )}
+
+          {status === 'error' && (
+            <>
+              <div className="mb-6">
+                <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+              </div>
+              <h2 className="text-xl font-semibold text-red-600 mb-2">验证失败</h2>
+              <p className="text-diary-500 text-sm mb-6">{message}</p>
+              <div className="space-y-3">
+                <button
+                  onClick={() => router.push('/login')}
+                  className="
+                    w-full py-3
+                    bg-diary-500 hover:bg-diary-600
+                    text-white font-semibold
+                    rounded-xl
+                    shadow-md hover:shadow-lg
+                    transition-all duration-300
+                    hover:-translate-y-0.5 active:translate-y-0
+                  "
+                >
+                  返回登录
+                </button>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="
+                    w-full py-3
+                    bg-diary-100 hover:bg-diary-200
+                    text-diary-700 font-medium
+                    rounded-xl
+                    transition-all duration-300
+                  "
+                >
+                  重试
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

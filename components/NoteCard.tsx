@@ -22,10 +22,12 @@ interface NoteCardProps {
 
 export default function NoteCard({ note, onDelete }: NoteCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     if (!confirm('确定要删除这条日记吗？')) return;
 
+    setIsDeleting(true);
     const { error } = await supabase
       .from('diary_entries')
       .delete()
@@ -33,6 +35,7 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
 
     if (error) {
       alert('删除失败');
+      setIsDeleting(false);
       return;
     }
 
@@ -58,102 +61,152 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
       return `${days}天前`;
     } else {
       return date.toLocaleDateString('zh-CN', {
-        year: 'numeric',
-        month: 'long',
+        month: 'short',
         day: 'numeric',
       });
     }
   };
 
-  const formatFullTimestamp = (dateString: string) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString('zh-CN', {
+    return date.toLocaleDateString('zh-CN', {
       year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
+      month: 'long',
+      day: 'numeric',
+      weekday: 'short',
     });
   };
 
-  // 获取内容预览（前100个字符）
-  const getPreview = (text: string) => {
-    if (text.length <= 100) return text;
-    return text.substring(0, 100) + '...';
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('zh-CN', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
+  const getPreview = (text: string) => {
+    if (text.length <= 120) return text;
+    return text.substring(0, 120) + '...';
+  };
+
+  const needsExpansion = note.content.length > 120;
+
   return (
-    <div className="animate-fade-in">
-      {/* 纸张卡片 */}
+    <div className={`
+      group
+      animate-scale-in
+      transition-all duration-500
+      ${isDeleting ? 'opacity-50 scale-95' : ''}
+    `}>
       <div
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-amber-200/50 dark:border-yellow-700/30"
-        style={{
-          background: isExpanded
-            ? 'linear-gradient(135deg, #fefce8 0%, #fef3c7 100%)'
-            : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
-        }}
+        onClick={() => needsExpansion && setIsExpanded(!isExpanded)}
+        className={`
+          relative
+          bg-white/70 backdrop-blur-lg
+          rounded-2xl sm:rounded-3xl
+          border border-diary-100
+          shadow-soft
+          hover:shadow-soft-lg hover:bg-white/80
+          transition-all duration-500
+          ${needsExpansion ? 'cursor-pointer' : ''}
+          ${isExpanded ? 'ring-2 ring-diary-200/50' : ''}
+        `}
       >
-        <div className="p-6">
-          {/* 顶部：时间和操作按钮 */}
+        <div className="p-5 sm:p-6">
+          {/* 顶部元信息 */}
           <div className="flex items-start justify-between mb-4">
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                {note.mood && (
-                  <span className="text-xl" title={note.mood}>
-                    {moodEmojis[note.mood]}
-                  </span>
-                )}
-                <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
+            <div className="flex items-center gap-3">
+              {/* 心情 emoji */}
+              {note.mood && (
+                <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-diary-100/80 rounded-xl sm:rounded-2xl text-xl sm:text-2xl">
+                  {moodEmojis[note.mood]}
+                </div>
+              )}
+              {/* 时间信息 */}
+              <div>
+                <p className="text-sm font-medium text-diary-700">
                   {formatRelativeTime(note.created_at)}
-                </span>
-                <span className="text-xs text-amber-600/70 dark:text-amber-300/70">
-                  {formatFullTimestamp(note.created_at).split(' ')[0].replace(/\//g, '/')} {formatFullTimestamp(note.created_at).split(' ')[1]}
-                </span>
+                </p>
+                <p className="text-xs text-diary-400">
+                  {formatDate(note.created_at)} · {formatTime(note.created_at)}
+                </p>
               </div>
             </div>
+
+            {/* 删除按钮 */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete();
               }}
-              className="text-amber-400 hover:text-red-600 transition-colors opacity-60 hover:opacity-100"
+              disabled={isDeleting}
+              className="
+                opacity-0 group-hover:opacity-100
+                p-2 rounded-xl
+                text-diary-300 hover:text-red-500 hover:bg-red-50
+                transition-all duration-300
+                disabled:opacity-50
+              "
               title="删除"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
               </svg>
             </button>
           </div>
 
           {/* 内容区域 */}
-          <div
-            className={`text-amber-900 dark:text-amber-100 leading-relaxed break-words overflow-wrap-anywhere prose prose-amber dark:prose-invert max-w-none prose-headings:mt-3 prose-headings:mb-2 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-headings:text-amber-900 dark:prose-headings:text-amber-100 ${
-              isExpanded ? '' : 'line-clamp-3'
-            }`}
-          >
+          <div className={`
+            text-diary-800 leading-relaxed
+            break-words overflow-wrap-anywhere
+            prose prose-diary max-w-none
+            prose-headings:text-diary-900 prose-headings:font-semibold
+            prose-p:my-2 prose-p:text-diary-700
+            prose-a:text-diary-600 prose-a:no-underline hover:prose-a:underline
+            prose-strong:text-diary-900
+            prose-code:text-diary-700 prose-code:bg-diary-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
+            prose-pre:bg-diary-100/50 prose-pre:border prose-pre:border-diary-200/50
+            prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5
+            transition-all duration-500
+          `}>
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {isExpanded ? note.content : getPreview(note.content)}
             </ReactMarkdown>
           </div>
 
-          {/* 展开/收起提示 */}
-          {note.content.length > 100 && (
-            <div className="mt-3 text-center">
-              <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                {isExpanded ? '点击收起 ▲' : '点击展开 ▼'}
-              </span>
+          {/* 展开/收起指示器 */}
+          {needsExpansion && (
+            <div className="mt-4 pt-3 border-t border-diary-100/50">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsExpanded(!isExpanded);
+                }}
+                className="
+                  w-full
+                  flex items-center justify-center gap-2
+                  text-xs font-medium text-diary-400
+                  hover:text-diary-600
+                  transition-colors duration-300
+                "
+              >
+                {isExpanded ? (
+                  <>
+                    收起
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                    </svg>
+                  </>
+                ) : (
+                  <>
+                    展开全文
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </>
+                )}
+              </button>
             </div>
           )}
         </div>
