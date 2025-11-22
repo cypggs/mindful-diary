@@ -4,12 +4,23 @@ import { randomBytes } from 'crypto';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy-key-for-build';
 
+// Client for auth verification
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Admin client for bypassing RLS
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 // GET /api/tokens - List all tokens for the current user
 export async function GET(request: NextRequest) {
   try {
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+
     const { data: { user }, error: userError } = await supabase.auth.getUser(
       request.headers.get('authorization')?.replace('Bearer ', '') || ''
     );
@@ -21,7 +32,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { data: tokens, error } = await supabase
+    // Use admin client to bypass RLS
+    const { data: tokens, error } = await supabaseAdmin
       .from('api_tokens')
       .select('id, name, created_at, last_used_at')
       .eq('user_id', user.id)
@@ -48,6 +60,13 @@ export async function GET(request: NextRequest) {
 // POST /api/tokens - Create a new token
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+
     const { data: { user }, error: userError } = await supabase.auth.getUser(
       request.headers.get('authorization')?.replace('Bearer ', '') || ''
     );
@@ -72,7 +91,8 @@ export async function POST(request: NextRequest) {
     // Generate a secure random token
     const token = `mdt_${randomBytes(32).toString('hex')}`;
 
-    const { data: newToken, error } = await supabase
+    // Use admin client to bypass RLS
+    const { data: newToken, error } = await supabaseAdmin
       .from('api_tokens')
       .insert([
         {
