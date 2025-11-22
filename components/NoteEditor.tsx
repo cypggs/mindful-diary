@@ -54,12 +54,20 @@ export default function NoteEditor({ onSave }: NoteEditorProps) {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && e.shiftKey) {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-6 animate-slide-up">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="记录此刻的想法..."
+        onKeyDown={handleKeyDown}
+        placeholder="记录此刻的想法... 支持 Markdown 语法 | Shift + Enter 快速保存"
         className="w-full h-32 px-4 py-3 border-0 focus:ring-2 focus:ring-indigo-500 rounded-lg resize-none text-gray-900 dark:text-white dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-all"
         autoFocus
       />

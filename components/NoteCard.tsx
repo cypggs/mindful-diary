@@ -2,6 +2,8 @@
 
 import { Note } from '@/lib/supabase';
 import { supabase } from '@/lib/supabase';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const moodEmojis: Record<string, string> = {
   happy: '😊',
@@ -111,9 +113,11 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
         </button>
       </div>
 
-      <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap leading-relaxed break-words overflow-wrap-anywhere">
-        {note.content}
-      </p>
+      <div className="text-gray-800 dark:text-gray-200 leading-relaxed break-words overflow-wrap-anywhere prose prose-slate dark:prose-invert max-w-none prose-headings:mt-3 prose-headings:mb-2 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-1">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {note.content}
+        </ReactMarkdown>
+      </div>
     </div>
   );
 }
