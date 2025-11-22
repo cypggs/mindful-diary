@@ -271,3 +271,42 @@ Result: 日记创建成功！
 - Consider implementing tags/categories beyond moods
 - Add rich text editor for formatting
 - Implement image attachments using Supabase Storage
+
+## Claude Code Task Completion Hook
+
+When completing significant development tasks, you can automatically record the achievement in the diary using the API.
+
+**Setup**:
+1. Create an API token in the dashboard (🔑 API button)
+2. Store the token securely in your local environment (NOT in git!)
+3. Use it to log task completions
+
+**Usage Pattern**:
+```bash
+# Store your token in environment variable
+export DIARY_TOKEN="your_mdt_token_here"
+
+# Log a task completion
+curl -X POST https://riji.cypggs.com/api/diary/create \
+  -H "Authorization: Bearer $DIARY_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "## Task Title\n\n[Description of completed work]\n\n### Features\n- Feature 1\n- Feature 2\n\n### Learnings\n[What was learned]",
+    "mood": "excited"
+  }'
+```
+
+**When to use**:
+- After completing major features or milestones
+- After fixing complex bugs
+- After learning something significant
+- When deploying important updates
+
+**Mood suggestions**:
+- `excited` - Major feature completion, breakthrough
+- `happy` - Successful deployment, smooth progress
+- `thoughtful` - Complex problem solved, deep learning
+- `grateful` - Team collaboration, helpful resources
+- `calm` - Refactoring, code cleanup completed
+
+**Security Note**: Never commit API tokens to git. Use environment variables or secure secret management.
