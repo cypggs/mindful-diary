@@ -76,29 +76,26 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-diary-50 via-diary-100/50 to-diary-200/30 flex items-center justify-center relative overflow-hidden px-4">
+    <div className="min-h-screen bg-gradient-to-br from-diary-100 via-orange-50 to-amber-100 flex items-center justify-center relative overflow-hidden px-4">
       {/* 装饰性背景元素 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-diary-300/20 rounded-full blur-3xl animate-pulse-soft"></div>
-        <div className="absolute top-1/2 -left-40 w-80 h-80 bg-diary-400/10 rounded-full blur-3xl animate-pulse-soft" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute -bottom-20 right-1/3 w-60 h-60 bg-diary-300/15 rounded-full blur-2xl animate-float"></div>
+        <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-diary-200/40 to-transparent"></div>
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-diary-300/30 rounded-full blur-3xl"></div>
+        <div className="absolute top-40 -left-20 w-64 h-64 bg-orange-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-48 h-48 bg-amber-300/25 rounded-full blur-2xl"></div>
       </div>
 
       {/* 登录卡片 */}
       <div className="relative z-10 w-full max-w-md animate-scale-in">
-        <div className="bg-white/70 backdrop-blur-xl rounded-4xl shadow-soft-lg border border-diary-100 p-8 sm:p-10">
+        <div className="bg-white rounded-3xl shadow-xl border border-diary-200 p-8 sm:p-10">
           {/* Logo & 标题 */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 bg-diary-500 rounded-2xl flex items-center justify-center shadow-lg">
-              <svg className="w-9 h-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-bold text-diary-900 mb-1">
-              Mindful Diary
+            <div className="text-6xl mb-4">📔</div>
+            <h1 className="text-3xl font-bold text-diary-900 mb-2">
+              我的小日记
             </h1>
-            <p className="text-diary-500 text-sm">
-              记录你的灵感与心情
+            <p className="text-diary-600 text-sm">
+              记录每一个温暖的瞬间 ✨
             </p>
           </div>
 
@@ -106,6 +103,10 @@ export default function AuthForm() {
           <form onSubmit={handleAuth} className="space-y-4">
             {/* 邮箱输入 */}
             <div>
+              <div className="flex items-center gap-2 mb-2 text-diary-600 text-sm">
+                <span>📧</span>
+                <span>邮箱地址</span>
+              </div>
               <input
                 id="email"
                 type="email"
@@ -113,15 +114,15 @@ export default function AuthForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="邮箱地址"
+                placeholder="你的邮箱"
                 className="
                   w-full px-4 py-3.5
-                  bg-diary-50/50
-                  border border-diary-200/50
+                  bg-diary-50
+                  border border-diary-200
                   rounded-xl
                   text-diary-900
-                  placeholder:text-diary-300
-                  focus:outline-none focus:ring-2 focus:ring-diary-300/50 focus:border-transparent focus:bg-white
+                  placeholder:text-diary-400
+                  focus:outline-none focus:ring-2 focus:ring-diary-400/50 focus:border-diary-400 focus:bg-white
                   transition-all duration-300
                 "
               />
@@ -129,6 +130,10 @@ export default function AuthForm() {
 
             {/* 密码输入 */}
             <div>
+              <div className="flex items-center gap-2 mb-2 text-diary-600 text-sm">
+                <span>🔒</span>
+                <span>密码</span>
+              </div>
               <input
                 id="password"
                 type="password"
@@ -136,15 +141,15 @@ export default function AuthForm() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="密码"
+                placeholder="你的密码"
                 className="
                   w-full px-4 py-3.5
-                  bg-diary-50/50
-                  border border-diary-200/50
+                  bg-diary-50
+                  border border-diary-200
                   rounded-xl
                   text-diary-900
-                  placeholder:text-diary-300
-                  focus:outline-none focus:ring-2 focus:ring-diary-300/50 focus:border-transparent focus:bg-white
+                  placeholder:text-diary-400
+                  focus:outline-none focus:ring-2 focus:ring-diary-400/50 focus:border-diary-400 focus:bg-white
                   transition-all duration-300
                 "
               />
@@ -169,24 +174,28 @@ export default function AuthForm() {
               disabled={loading}
               className="
                 w-full py-3.5
-                bg-diary-500 hover:bg-diary-600
+                bg-gradient-to-r from-diary-500 to-orange-500
+                hover:from-diary-600 hover:to-orange-600
                 text-white font-semibold
                 rounded-xl
-                shadow-md hover:shadow-lg
+                shadow-lg shadow-diary-300/50 hover:shadow-xl
                 disabled:opacity-50 disabled:cursor-not-allowed
                 transition-all duration-300
                 hover:-translate-y-0.5 active:translate-y-0
+                flex items-center justify-center gap-2
               "
             >
               {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                  </svg>
-                  处理中...
-                </span>
-              ) : (isSignUp ? '注册' : '登录')}
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  <span>处理中...</span>
+                </>
+              ) : (
+                <>
+                  <span>{isSignUp ? '🌱' : '✨'}</span>
+                  <span>{isSignUp ? '开始记录' : '开启日记'}</span>
+                </>
+              )}
             </button>
 
             {/* 切换登录/注册 */}
@@ -198,9 +207,9 @@ export default function AuthForm() {
                   setMessage('');
                   setShowResendEmail(false);
                 }}
-                className="text-sm text-diary-500 hover:text-diary-700 transition-colors"
+                className="text-sm text-diary-600 hover:text-diary-800 transition-colors font-medium"
               >
-                {isSignUp ? '已有账号？立即登录' : '没有账号？立即注册'}
+                {isSignUp ? '已有账号？立即登录 👉' : '没有账号？立即注册 ✍️'}
               </button>
             </div>
 
@@ -211,9 +220,9 @@ export default function AuthForm() {
                   type="button"
                   onClick={handleResendConfirmation}
                   disabled={loading}
-                  className="text-sm text-diary-400 hover:text-diary-600 transition-colors disabled:opacity-50"
+                  className="text-sm text-diary-500 hover:text-diary-700 transition-colors disabled:opacity-50"
                 >
-                  没收到邮件？点击重新发送
+                  📬 没收到邮件？点击重新发送
                 </button>
               </div>
             )}
@@ -221,8 +230,8 @@ export default function AuthForm() {
         </div>
 
         {/* 底部装饰文字 */}
-        <p className="text-center text-xs text-diary-400 mt-6">
-          每一天都值得被记住
+        <p className="text-center text-sm text-diary-600 mt-6">
+          用文字拥抱每一个平凡的日子 💕
         </p>
       </div>
     </div>

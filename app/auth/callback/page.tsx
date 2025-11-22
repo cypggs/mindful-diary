@@ -59,63 +59,48 @@ export default function AuthCallback() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-diary-50 via-diary-100/50 to-diary-200/30 flex items-center justify-center relative overflow-hidden px-4">
+    <div className="min-h-screen bg-gradient-to-br from-diary-100 via-orange-50 to-amber-100 flex items-center justify-center relative overflow-hidden px-4">
       {/* 装饰性背景元素 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-diary-300/20 rounded-full blur-3xl animate-pulse-soft"></div>
-        <div className="absolute top-1/2 -left-20 w-60 h-60 bg-diary-400/10 rounded-full blur-3xl animate-pulse-soft" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-diary-200/40 to-transparent"></div>
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-diary-300/30 rounded-full blur-3xl"></div>
+        <div className="absolute top-40 -left-20 w-64 h-64 bg-orange-300/20 rounded-full blur-3xl"></div>
       </div>
 
       {/* 状态卡片 */}
       <div className="relative z-10 w-full max-w-sm animate-scale-in">
-        <div className="bg-white/70 backdrop-blur-xl rounded-4xl shadow-soft-lg border border-diary-100 p-8 text-center">
+        <div className="bg-white rounded-3xl shadow-xl border border-diary-200 p-8 text-center">
           {status === 'loading' && (
             <>
-              <div className="mb-6">
-                <div className="relative w-16 h-16 mx-auto">
-                  <div className="absolute inset-0 rounded-full border-4 border-diary-200"></div>
-                  <div className="absolute inset-0 rounded-full border-4 border-diary-500 border-t-transparent animate-spin"></div>
-                </div>
-              </div>
-              <h2 className="text-xl font-semibold text-diary-900 mb-2">验证中</h2>
-              <p className="text-diary-500 text-sm">{message}</p>
+              <div className="text-6xl mb-6">⏳</div>
+              <h2 className="text-xl font-semibold text-diary-900 mb-2">验证中...</h2>
+              <p className="text-diary-600 text-sm">{message}</p>
             </>
           )}
 
           {status === 'success' && (
             <>
-              <div className="mb-6">
-                <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              </div>
-              <h2 className="text-xl font-semibold text-green-600 mb-2">验证成功</h2>
-              <p className="text-diary-500 text-sm">{message}</p>
+              <div className="text-6xl mb-6">✅</div>
+              <h2 className="text-xl font-semibold text-green-600 mb-2">验证成功！</h2>
+              <p className="text-diary-600 text-sm">{message}</p>
             </>
           )}
 
           {status === 'error' && (
             <>
-              <div className="mb-6">
-                <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </div>
-              </div>
+              <div className="text-6xl mb-6">😢</div>
               <h2 className="text-xl font-semibold text-red-600 mb-2">验证失败</h2>
-              <p className="text-diary-500 text-sm mb-6">{message}</p>
+              <p className="text-diary-600 text-sm mb-6">{message}</p>
               <div className="space-y-3">
                 <button
                   onClick={() => router.push('/login')}
                   className="
                     w-full py-3
-                    bg-diary-500 hover:bg-diary-600
+                    bg-gradient-to-r from-diary-500 to-orange-500
+                    hover:from-diary-600 hover:to-orange-600
                     text-white font-semibold
                     rounded-xl
-                    shadow-md hover:shadow-lg
+                    shadow-lg shadow-diary-300/50 hover:shadow-xl
                     transition-all duration-300
                     hover:-translate-y-0.5 active:translate-y-0
                   "
