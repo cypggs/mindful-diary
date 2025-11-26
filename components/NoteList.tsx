@@ -1,14 +1,15 @@
 'use client';
 
+import { memo } from 'react';
 import { Note } from '@/lib/supabase';
 import NoteCard from './NoteCard';
 
 interface NoteListProps {
   notes: Note[];
-  onUpdate: () => void;
+  onDelete: (noteId: string) => void;
 }
 
-export default function NoteList({ notes, onUpdate }: NoteListProps) {
+function NoteList({ notes, onDelete }: NoteListProps) {
   if (notes.length === 0) {
     return (
       <div className="text-center py-16">
@@ -23,8 +24,10 @@ export default function NoteList({ notes, onUpdate }: NoteListProps) {
   return (
     <div className="space-y-4">
       {notes.map((note) => (
-        <NoteCard key={note.id} note={note} onDelete={onUpdate} />
+        <NoteCard key={note.id} note={note} onDelete={() => onDelete(note.id)} />
       ))}
     </div>
   );
 }
+
+export default memo(NoteList);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase, Note } from '@/lib/supabase';
 import NoteEditor from '@/components/NoteEditor';
@@ -28,14 +28,45 @@ export default function Dashboard() {
     }
     setUser(session.user);
     fetchNotes();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('diary_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'diary_entries',
+          filter: `user_id=eq.${session.user.id}`,
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setNotes((current) => [payload.new as Note, ...current]);
+          } else if (payload.eventType === 'DELETE') {
+            setNotes((current) => current.filter((note) => note.id !== payload.old.id));
+          } else if (payload.eventType === 'UPDATE') {
+            setNotes((current) =>
+              current.map((note) => (note.id === payload.new.id ? (payload.new as Note) : note))
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   };
 
   const fetchNotes = async () => {
     setLoading(true);
+    // Only fetch recent 50 notes for faster initial load
     const { data, error } = await supabase
       .from('diary_entries')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(50);
 
     if (error) {
       console.error('获取日记失败:', error);
@@ -44,6 +75,16 @@ export default function Dashboard() {
     }
     setLoading(false);
   };
+
+  // Optimistic update: add note immediately
+  const handleNoteCreated = useCallback((tempNote: Note) => {
+    setNotes((current) => [tempNote, ...current]);
+  }, []);
+
+  // Optimistic update: remove note immediately
+  const handleNoteDeleted = useCallback((noteId: string) => {
+    setNotes((current) => current.filter((note) => note.id !== noteId));
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -132,7 +173,7 @@ export default function Dashboard() {
 
         {/* 编辑器区域 */}
         <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <NoteEditor onSave={fetchNotes} />
+          <NoteEditor onSave={handleNoteCreated} />
         </div>
 
         {/* 搜索栏 */}
@@ -161,7 +202,7 @@ export default function Dashboard() {
               <span>📚</span>
               <span>共 {notes.length} 篇日记</span>
             </div>
-            <NoteList notes={filteredNotes} onUpdate={fetchNotes} />
+            <NoteList notes={filteredNotes} onDelete={handleNoteDeleted} />
           </div>
         ) : !searchQuery && (
           <div className="text-center py-16 animate-fade-in">

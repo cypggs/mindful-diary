@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, Note } from '@/lib/supabase';
 
 type Mood = 'happy' | 'calm' | 'sad' | 'excited' | 'thoughtful' | 'grateful' | null;
 
@@ -15,7 +15,7 @@ const moods: { value: Mood; label: string; emoji: string }[] = [
 ];
 
 interface NoteEditorProps {
-  onSave: () => void;
+  onSave: (note: Note) => void;
 }
 
 export default function NoteEditor({ onSave }: NoteEditorProps) {
@@ -32,24 +32,45 @@ export default function NoteEditor({ onSave }: NoteEditorProps) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('未登录');
 
-      const { error } = await supabase
+      // Create temporary note for optimistic UI
+      const tempNote: Note = {
+        id: `temp-${Date.now()}`,
+        user_id: user.id,
+        content: content.trim(),
+        mood,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      // Clear form and show optimistically
+      const savedContent = content.trim();
+      const savedMood = mood;
+      setContent('');
+      setMood(null);
+      onSave(tempNote);
+
+      // Save to database in background
+      const { data, error } = await supabase
         .from('diary_entries')
         .insert([
           {
             user_id: user.id,
-            content: content.trim(),
-            mood,
+            content: savedContent,
+            mood: savedMood,
           },
-        ]);
+        ])
+        .select()
+        .single();
 
       if (error) throw error;
 
-      setContent('');
-      setMood(null);
-      onSave();
+      // Real-time subscription will handle the update automatically
     } catch (error) {
       console.error('保存失败:', error);
       alert('保存失败，请重试');
+      // Restore content on error
+      setContent(content);
+      setMood(mood);
     } finally {
       setSaving(false);
     }

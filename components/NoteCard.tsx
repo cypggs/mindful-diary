@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Note } from '@/lib/supabase';
 import { supabase } from '@/lib/supabase';
 import ReactMarkdown from 'react-markdown';
@@ -20,7 +20,7 @@ interface NoteCardProps {
   onDelete: () => void;
 }
 
-export default function NoteCard({ note, onDelete }: NoteCardProps) {
+function NoteCard({ note, onDelete }: NoteCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -28,6 +28,11 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
     if (!confirm('确定要删除这条日记吗？删除后无法恢复哦 😢')) return;
 
     setIsDeleting(true);
+
+    // Optimistic update - call onDelete immediately
+    onDelete();
+
+    // Delete from database in background
     const { error } = await supabase
       .from('diary_entries')
       .delete()
@@ -39,7 +44,7 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
       return;
     }
 
-    onDelete();
+    // Real-time subscription will handle the removal automatically
   };
 
   const formatRelativeTime = (dateString: string) => {
@@ -201,3 +206,5 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
     </div>
   );
 }
+
+export default memo(NoteCard);
